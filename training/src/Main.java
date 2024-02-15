@@ -130,8 +130,7 @@ public class Main {
         cost += (tryParseDouble(reader.next(), 3))*oneLitres;
 
         System.out.println("Total cost: £" + String.format("%.2f", cost));
-
-
+        //add a comment
     }
 
     public static void main(String[] args) {
