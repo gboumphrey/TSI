@@ -11,7 +11,7 @@ public class GameBoard {
         }
         populateBoard(rows, columns, mines);
     }
-    public int exploreAround(int x, int y) {
+    public int minesAround(int x, int y) {
         if(board[x][y].getNumber() == 9){return 9;} //do not overwrite mines
         int count = 0;
         for(int i = x-1; i<=x+1; i++) {
@@ -20,9 +20,7 @@ public class GameBoard {
                     if(board[i][j].getNumber() == 9) {
                         count++;
                     }
-                } catch(ArrayIndexOutOfBoundsException e) {
-
-                }
+                } catch(ArrayIndexOutOfBoundsException ignore) { }
             }
         }
         return count;
@@ -35,6 +33,7 @@ public class GameBoard {
             }
             System.out.println();
         }
+        System.out.println();
     }
 
 
@@ -51,13 +50,34 @@ public class GameBoard {
                 }
             }
         }
-
         //populate the board with numbers
         for(int i = 0; i<board.length; i++) {
             for(int j = 0; j<board[i].length; j++) {
-                board[i][j].setNumber(exploreAround(i, j));
+                board[i][j].setNumber(minesAround(i, j));
             }
         }
+    }
 
+    public void revealTile(int x, int y) {
+        int number = board[x][y].reveal();
+        if(number==9) {
+            // GAME OVER HERE
+            System.out.println("GAME OVER");
+        }
+        if(number==0) {
+            revealAround(x, y);
+        }
+    }
+    public void revealAround(int x, int y) {
+        for(int i = x-1; i<=x+1; i++) {
+            for(int j = y-1; j<=y+1; j++){
+                if(board[i][j].check()) {
+                    try {
+                        revealTile(i, j);
+                    } catch (ArrayIndexOutOfBoundsException ignore) {
+                    }
+                }
+            }
+        }
     }
 }

@@ -13,6 +13,10 @@ public class Tile {
 
     public int getNumber() {return number;}
 
+    public boolean check() {
+        return (!revealed && !flagged);
+    }
+
     public char drawTile() {
         if(flagged) {
             return 'F';
@@ -22,6 +26,11 @@ public class Tile {
             // + 48 to get correct ascii index
             return (char)(this.getNumber()+48);
         }
+    }
+
+    public int reveal() {
+        revealed = true;
+        return this.getNumber();
     }
 
 
