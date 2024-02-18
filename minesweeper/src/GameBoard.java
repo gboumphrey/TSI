@@ -64,10 +64,12 @@ public class GameBoard {
     public void revealTile(int x, int y) {
         int number = board[x][y].reveal();
         if(number==9) {
-            Main.gameOver = true;
-            System.out.println("!!!!!!!!!");
-            System.out.println("GAME OVER");
-            System.out.println("!!!!!!!!!");
+            if(!Main.gameOver) {
+                System.out.println("!!!!!!!!!");
+                System.out.println("GAME OVER");
+                System.out.println("!!!!!!!!!");
+                Main.gameOver = true;
+            }
         }
         if(number==0) {
             revealAround(x, y);
@@ -94,7 +96,6 @@ public class GameBoard {
             for (int j = 0; j<board[i].length; j++) {
                 revealTile(i, j);
             }
-            System.out.println();
         }
     }
 }

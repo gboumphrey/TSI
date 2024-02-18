@@ -33,9 +33,10 @@ public class Main {
             System.out.println("Type flag/reveal then coordinate (horizontal then vertical)");
             interpret(reader.nextLine(), board);
             if (board.flags == mines) {
+                System.out.println("All flags placed! Revealing remaining tiles...");
                 board.revealAll();
+                GameBoard.drawBoard();
                 if(!gameOver) {
-                    GameBoard.drawBoard();
                     System.out.println("!!!!!!!!!!!!!!!");
                     System.out.println("CONGRATULATIONS");
                     System.out.println("!!!!!!!!!!!!!!!");
