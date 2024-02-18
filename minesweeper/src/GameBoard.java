@@ -1,6 +1,7 @@
 public class GameBoard {
 
     public static Tile[][] board;
+    public int flags = 0;
 
     public GameBoard(int rows, int columns, int mines) {
         board = new Tile[rows][columns];
@@ -11,33 +12,7 @@ public class GameBoard {
         }
         populateBoard(rows, columns, mines);
     }
-    public int minesAround(int x, int y) {
-        if(board[x][y].getNumber() == 9){return 9;} //do not overwrite mines
-        int count = 0;
-        for(int i = x-1; i<=x+1; i++) {
-            for(int j = y-1; j<=y+1; j++){
-                try {
-                    if(board[i][j].getNumber() == 9) {
-                        count++;
-                    }
-                } catch(ArrayIndexOutOfBoundsException ignore) { }
-            }
-        }
-        return count;
-    }
-
-    public static void drawBoard() {
-        for (Tile[] tiles : board) {
-            for (Tile tile : tiles) {
-                System.out.print(tile.drawTile());
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
-
-    public void populateBoard(int rows, int columns, int mines) {
+    private void populateBoard(int rows, int columns, int mines) {
         //populate the board with mines
         for(int i = 0; i<mines; i++) {
             boolean inProgress = true;
@@ -57,27 +32,69 @@ public class GameBoard {
             }
         }
     }
-
+    private int minesAround(int x, int y) {
+        if(board[x][y].getNumber() == 9){return 9;} //do not overwrite mines
+        int count = 0;
+        for(int i = x-1; i<=x+1; i++) {
+            for(int j = y-1; j<=y+1; j++){
+                try {
+                    if(board[i][j].getNumber() == 9) {
+                        count++;
+                    }
+                } catch(ArrayIndexOutOfBoundsException ignore) { }
+            }
+        }
+        return count;
+    }
+    public static void drawBoard() {
+        System.out.print("# ");
+        for (int k = 0; k<board[0].length; k++) {
+            System.out.print(Character.toString((char)k+65)+ " ");
+        }
+        System.out.println();
+        for (int i = 0; i<board.length; i++) {
+            System.out.print(Character.toString((char)i+65) + " ");
+            for (int j = 0; j<board[i].length; j++) {
+                System.out.print(board[i][j].drawTile() + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
     public void revealTile(int x, int y) {
         int number = board[x][y].reveal();
         if(number==9) {
-            // GAME OVER HERE
+            Main.gameOver = true;
+            System.out.println("!!!!!!!!!");
             System.out.println("GAME OVER");
+            System.out.println("!!!!!!!!!");
         }
         if(number==0) {
             revealAround(x, y);
         }
     }
-    public void revealAround(int x, int y) {
+
+    public void flagTile(int x, int y) {
+        int number = board[x][y].toggleFlagged();
+        flags += number;
+    }
+    private void revealAround(int x, int y) {
         for(int i = x-1; i<=x+1; i++) {
             for(int j = y-1; j<=y+1; j++){
-                if(board[i][j].check()) {
-                    try {
+                try {
+                    if(board[i][j].check()) {
                         revealTile(i, j);
-                    } catch (ArrayIndexOutOfBoundsException ignore) {
                     }
-                }
+                }catch (ArrayIndexOutOfBoundsException ignore) { }
             }
+        }
+    }
+    public void revealAll() {
+        for (int i = 0; i<board.length; i++) {
+            for (int j = 0; j<board[i].length; j++) {
+                revealTile(i, j);
+            }
+            System.out.println();
         }
     }
 }

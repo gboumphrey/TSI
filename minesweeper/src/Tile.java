@@ -13,6 +13,18 @@ public class Tile {
 
     public int getNumber() {return number;}
 
+    public int toggleFlagged() {
+        if(!revealed) {
+            flagged = !flagged;
+            if (flagged) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+        else {return 0;}
+    }
+
     public boolean check() {
         return (!revealed && !flagged);
     }
@@ -29,8 +41,14 @@ public class Tile {
     }
 
     public int reveal() {
-        revealed = true;
-        return this.getNumber();
+        if(!flagged && !revealed) {
+            revealed = true;
+            return this.getNumber();
+        } else if(!flagged && revealed) {
+            //reveal around myself
+            return 0;
+        }
+        return -1;
     }
 
 
