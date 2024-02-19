@@ -1,7 +1,10 @@
+import javax.swing.*;
+
 public class Tile {
     public boolean revealed;
     public int number; //9 = MINE
     public boolean flagged;
+
     public Tile() {
         number = 0;
         revealed = false;
@@ -44,7 +47,7 @@ public class Tile {
         if(!flagged && !revealed) {
             revealed = true;
             return this.getNumber();
-        } else if(!flagged && revealed) {
+        } else if(!flagged) {
             //reveal around myself
             return 0;
         }

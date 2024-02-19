@@ -1,5 +1,5 @@
 import java.util.Scanner;
-import java.util.regex.PatternSyntaxException;
+import javax.swing.*;
 
 public class Main {
     public static Scanner reader = new Scanner(System.in);
@@ -16,7 +16,7 @@ public class Main {
                 System.out.println("Command wasn't recognised.");
             }
         } catch (Exception e) {
-            System.out.println("Coordinate wasn't recognised.");
+            System.out.println("Coordinate wasn't recognised. " + e);
         }
     }
 
@@ -28,12 +28,12 @@ public class Main {
         int mines = 10;
         GameBoard board = new GameBoard(rows, columns, mines);
 
+        /* Loop for playing via terminal
         while(!gameOver) {
             GameBoard.drawBoard();
             System.out.println("Type flag/reveal then coordinate (horizontal then vertical)");
             interpret(reader.nextLine(), board);
             if (board.flags == mines) {
-                System.out.println("All flags placed! Revealing remaining tiles...");
                 board.revealAll();
                 GameBoard.drawBoard();
                 if(!gameOver) {
@@ -45,6 +45,7 @@ public class Main {
             }
 
         }
+         */
 
     }
 }

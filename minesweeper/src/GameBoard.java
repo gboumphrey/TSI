@@ -1,16 +1,40 @@
-public class GameBoard {
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+public class GameBoard implements MouseListener {
 
     public static Tile[][] board;
-    public int flags = 0;
+    public static int flags = 0;
+    public static int mines;
+    private static final JFrame frame = new JFrame();
+    public static JButton[][] buttons;
 
-    public GameBoard(int rows, int columns, int mines) {
+    public GameBoard(int rows, int columns, int m) {
         board = new Tile[rows][columns];
+        buttons = new JButton[rows][columns];
+        mines = m;
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(500,500);
+        frame.setVisible(true);
+        frame.setTitle("Minesweeper");
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 board[i][j] = new Tile();
+                buttons[i][j] = new JButton();
+                buttons[i][j].addMouseListener(this);
+                frame.add(buttons[i][j]);
             }
         }
-        populateBoard(rows, columns, mines);
+        if(columns<30 && rows<30 && mines<rows*columns) {
+            frame.setLayout(new GridLayout(rows, columns));
+            populateBoard(rows, columns, mines);
+        } else {
+            System.out.println("Invalid board configuration");
+            Main.gameOver = true;
+        }
     }
     private void populateBoard(int rows, int columns, int mines) {
         //populate the board with mines
@@ -56,6 +80,7 @@ public class GameBoard {
             System.out.print(Character.toString((char)i+65) + " ");
             for (int j = 0; j<board[i].length; j++) {
                 System.out.print(board[i][j].drawTile() + " ");
+                buttons[i][j].setText(String.valueOf(board[i][j].drawTile()));
             }
             System.out.println();
         }
@@ -64,11 +89,9 @@ public class GameBoard {
     public void revealTile(int x, int y) {
         int number = board[x][y].reveal();
         if(number==9) {
-            if(!Main.gameOver) {
-                System.out.println("!!!!!!!!!");
-                System.out.println("GAME OVER");
-                System.out.println("!!!!!!!!!");
-                Main.gameOver = true;
+            buttons[x][y].setBackground(Color.RED);
+            if (!Main.gameOver) {
+                endGame(0);
             }
         }
         if(number==0) {
@@ -92,10 +115,60 @@ public class GameBoard {
         }
     }
     public void revealAll() {
+        System.out.println("All flags placed! Revealing remaining tiles...");
         for (int i = 0; i<board.length; i++) {
             for (int j = 0; j<board[i].length; j++) {
                 revealTile(i, j);
             }
         }
     }
+    public void endGame(int a) {
+        JFrame over = new JFrame();
+        over.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        over.setSize(300,100);
+        over.setVisible(true);
+        over.setTitle("Game Over");
+        Main.gameOver = true;
+        revealAll();
+        if(a==0) {
+            over.add(new JLabel("YOU LOSE! Uncovered a mine."));
+        } else {
+            over.add(new JLabel("YOU WIN! Congratulations!"));
+        }
+    }
+    public void mouseClicked(MouseEvent e) {
+        JButton src = (JButton) e.getSource();
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            for (int i = 0; i < buttons.length; i++) {
+                for (int j = 0; j <buttons[i].length; j++) {
+                    if (src==buttons[i][j]) {
+                    revealTile(i,j);
+                }
+            }
+        }
+        } else if (SwingUtilities.isRightMouseButton(e)) {
+            for (int i = 0; i < buttons.length; i++) {
+                for (int j = 0; j <buttons[i].length; j++) {
+                    if (src==buttons[i][j]) {
+                        flagTile(i,j);
+                    }
+                }
+            }
+        }
+        if(flags==mines) {
+            revealAll();
+            if(!Main.gameOver) {
+                endGame(1);
+            }
+        }
+        drawBoard();
+    }
+
+    public void mouseEntered(MouseEvent e) {}
+
+    public void mouseExited(MouseEvent e) {}
+
+    public void mousePressed(MouseEvent e) {}
+
+    public void mouseReleased(MouseEvent e) {}
 }
